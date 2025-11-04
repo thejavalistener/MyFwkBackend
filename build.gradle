@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.github.thejavalistener'
-version = '1.0.6'
+version = '1.0.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -15,8 +15,6 @@ repositories {
 }
 
 dependencies {
-    // LOG
-    implementation 'log4j:log4j:1.2.17'
 
     // SPRING
     implementation 'org.springframework:spring-context:5.3.14'
@@ -33,14 +31,15 @@ dependencies {
 
     // Mail
     implementation 'com.sun.mail:javax.mail:1.6.2'
+	implementation 'com.github.thejavalistener:MyFwkUtils:1.0.0'
 
     // Utilidades
-    implementation 'com.google.code.gson:gson:2.11.0'
-    implementation 'org.reflections:reflections:0.10.2'
+//    implementation 'com.google.code.gson:gson:2.11.0'
+ //   implementation 'org.reflections:reflections:0.10.2'
 
     // QR / Barcode
-    implementation 'com.google.zxing:core:3.5.2'
-    implementation 'com.google.zxing:javase:3.5.2'
+ //   implementation 'com.google.zxing:core:3.5.2'
+ //   implementation 'com.google.zxing:javase:3.5.2'
 }
 
 tasks.withType(JavaCompile) {
