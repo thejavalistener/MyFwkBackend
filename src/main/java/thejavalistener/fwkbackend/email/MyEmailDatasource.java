@@ -1,6 +1,6 @@
 package thejavalistener.fwkbackend.email;
 
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 public interface MyEmailDatasource
 {
