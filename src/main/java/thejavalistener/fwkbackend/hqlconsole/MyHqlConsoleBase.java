@@ -11,7 +11,10 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.springframework.context.ApplicationContext;
+
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.panel.MyBorderLayout;
 import thejavalistener.fwkutils.awt.panel.MyInsets;
@@ -22,11 +25,13 @@ import thejavalistener.fwkutils.awt.tabbedpane.MyTabbedPane;
 import thejavalistener.fwkutils.awt.table.MyTable;
 import thejavalistener.fwkutils.awt.text.MyTextPane;
 import thejavalistener.fwkutils.awt.variuos.MyAwt;
+import thejavalistener.fwkutils.properties.MyFileProperties;
 import thejavalistener.fwkutils.string.MyString;
-
 
 public abstract class MyHqlConsoleBase
 {
+	private MyFileProperties properties;
+
 	protected abstract void executeHql(String sql);
 
 	// panel principal
@@ -43,8 +48,10 @@ public abstract class MyHqlConsoleBase
 	private EscuchaConsola escuchaConsola;
 	
 	@PostConstruct
-	public void mkGUI()
+	public void init()
 	{
+		properties = new MyFileProperties();
+		
 		// panel principal es un border layout
 		contentPane = new JPanel(new BorderLayout());
 		
@@ -59,10 +66,11 @@ public abstract class MyHqlConsoleBase
 		resultsTabbedPane.c().setBorder(null);
 		
 		// En el center el SplitPane, con el commandLine (izq) y el resultsTabbedPane (der)
-		Integer dividerLocation = 200;
+		Integer dividerLocation = properties.getObject("myhqlconsole.status.dividerLocation");
+		dividerLocation=dividerLocation==null?200:dividerLocation;
 		splitPane = new MySplitPane(MySplitPane.VERTICAL,scrollSQL,resultsTabbedPane.c());		
 		splitPane.setDividerLocation(dividerLocation);
-//		splitPane.setMySplitePaneListener(i->properties.putObject("hqlconsole.dividerLocation",(Integer)i));
+		splitPane.setMySplitePaneListener(i->properties.putObject("myhqlconsole.status.dividerLocation",(Integer)i));
 		splitPane.setDividerSize(1);
 
 		JPanel pCenter = new JPanel(new BorderLayout());
@@ -88,10 +96,16 @@ public abstract class MyHqlConsoleBase
 		
 		contentPane.add(pCenter,BorderLayout.CENTER);
 		
-//		String txt = properties.getObject("hqlscreen.console");
-//		taSQL.setText(MyString.ifNull(txt,""));
+		String txt = properties.getObject("myhqlconsole.status.commandline");
+		commandLine.setText(MyString.ifNull(txt,""));
 		
 		commandLine.requestFocus();
+	}
+	
+	@PreDestroy
+	public void destroy()
+	{
+		save();
 	}
 
 	private void _addLink(String desc,String hotKey,int comb,int vk,char c,JPanel p)
@@ -146,13 +160,7 @@ public abstract class MyHqlConsoleBase
 		pResultado.add(jsp,BorderLayout.CENTER);    		
 		resultsTabbedPane.addTab(pResultado,true,sql);
 	}
-	
-	public void destroy()
-	{
-		_saveConsola();
-	}
-
-	
+		
 	public JPanel c()
 	{
 		return contentPane;
@@ -176,8 +184,8 @@ public abstract class MyHqlConsoleBase
 	    	// ALT+S - Save
 	    	if(e.isAltDown() && Character.toLowerCase(e.getKeyChar()) == 's') 
 	        {
-	    		_saveConsola();
-	    		//showInformationMessage("La consola ha sido gardada","Bien!");
+	    		save();
+	    		MyAwt.showInformationMessage("La línea de comandos fue guardada con éxito","Bien!",contentPane);
 	    		return;
 	        }
 
@@ -193,7 +201,7 @@ public abstract class MyHqlConsoleBase
 		    	// ejecuto el HQL
 		    	executeHql(txt);
 
-		    	_saveConsola();
+		    	save();
 		    	return;
 	        }
 	    		        
@@ -204,6 +212,12 @@ public abstract class MyHqlConsoleBase
 				return;
 	        }
 	    }
+	}
+	
+	public void save()
+	{
+		String txt = commandLine.getText();
+		properties.putObject("myhqlconsole.status.commandline",txt);		
 	}
 
 	
@@ -220,10 +234,6 @@ public abstract class MyHqlConsoleBase
 		
 	}
 
-	private void _saveConsola()
-	{
-//		String txt = taSQL.getText();
-//		getProperties().putString("hqlscreen.console",txt);		
-	}
+	
 	
 }

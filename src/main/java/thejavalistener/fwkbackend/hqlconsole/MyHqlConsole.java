@@ -25,6 +25,8 @@ public class MyHqlConsole extends MyHqlConsoleBase
 	@PersistenceContext
 	private EntityManager em;
 	
+	
+	
 	private boolean hayUpdate = false;
 
 	@Override
