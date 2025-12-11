@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -28,10 +29,8 @@ public abstract class MyHqlConsoleBase
 {
 	protected abstract void executeHql(String sql);
 
-	
-	
 	// panel principal
-	private JPanel contentPane;
+	protected JPanel contentPane;
 
 	// línea de comandos
 	private MyTextPane commandLine;
@@ -110,12 +109,23 @@ public abstract class MyHqlConsoleBase
 		p.add(lnk.c());
 	}
 	
-	public void addResult(String sql,Object result)
+	public void addResult(String sql,List<Object[]> rows)
 	{
-		addResult(sql,result,null);
+		Object[] headers = null;
+		if( rows.size()>0 )
+		{
+			headers = new Object[rows.get(0).length];
+			for(int i=0; i<headers.length; i++) headers[i] = "c"+i;
+		}
+		else
+		{
+			headers = new Object[0];
+		}
+		
+		addResult(sql,rows,headers);
 	}
 	
-	public void addResult(String sql,Object result,Object[] headers)
+	public void addResult(String sql,List<Object[]> rows,Object[] headers)
 	{
 		MyLink lnk = new MyLink(sql,MyLink.LINK);
 		lnk.setActionListener(l->MyAwt.copyToClipboard(lnk.getText()));
@@ -125,12 +135,12 @@ public abstract class MyHqlConsoleBase
 		MyTable<?> table = new MyTable<>();
 		table.setBackground(Color.BLACK);
 		table.setForeground(Color.WHITE);
-		if( headers!=null ) table.headers(headers);
+//		if( headers!=null ) 
+		table.headers(headers);
 		table.c().setRowHeight(table.c().getRowHeight()+5);
 		
 		
-		table.setData(result);
-//		table.setEnableAlternateRowColor(true);
+		table.setData(rows);
 		MyScrollPane jsp = new MyScrollPane(table.c());
 		jsp.setBorder(null);
 		pResultado.add(jsp,BorderLayout.CENTER);    		

@@ -1,20 +1,20 @@
 package thejavalistener.fwkbackend.hqlconsole;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
-import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractColumnQueryStatement;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyCollection;
 
 @Component
-public class DescStatement extends AbstractUpdateStatement
+public class DescStatement extends AbstractColumnQueryStatement
 {
 	@PersistenceContext
 	private EntityManager em = null;
@@ -22,30 +22,30 @@ public class DescStatement extends AbstractUpdateStatement
 	private Set<EntityType<?>> entities = null;
 	
 	@Override
-	public long process(String sql,List<Object[]> outputRows,Function<Long,Boolean> commit)
+	public List<Object[]> process()
 	{
+		List<Object[]> ret = new ArrayList<>();
+		
 		// obtengo todas las entidades definidas en el contexto
 		entities = em.getMetamodel().getEntities();
 
 		// spliteo el sql esperando "DESC" o "DESC Alumno"
-		List<String> words = MyString.wordList(sql);
-
+		List<String> words = MyString.wordList(getHql());
 		int w = words.size();
-
 		
 		switch(w)
 		{
 			case 1: // DESC
-				_procesarDesc(outputRows);
+				_procesarDesc(ret);
 				break;
 			case 2: // DESC Alumno
-				_procesarDescEntity(words.get(2),outputRows);
+				_procesarDescEntity(words.get(1),ret);
 				break;
 			default:
 				throw new RuntimeException("Modo de uso: DESC [AlgunaEntidad]");
 		}
 		
-		return 0;
+		return ret;
 	}
 	
 	private long _procesarDesc(List<Object[]> outputRows)

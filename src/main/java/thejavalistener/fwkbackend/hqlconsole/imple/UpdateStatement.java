@@ -17,9 +17,16 @@ public class UpdateStatement extends AbstractUpdateStatement
 		
 	@Override
 	@Transactional
-	public Long process()
+	public Integer process()
 	{
 		Query q = em.createQuery(getHql());				
-		return q.executeUpdate();
+		int updateCount = q.executeUpdate();
+		
+		if( !getExecuteCommit().apply(updateCount) )
+		{
+			throw new IllegalStateException("ROLLEDBACK");
+		}
+		
+		return updateCount;
 	}
 }

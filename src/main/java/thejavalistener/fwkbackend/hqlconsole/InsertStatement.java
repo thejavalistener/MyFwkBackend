@@ -2,8 +2,6 @@ package thejavalistener.fwkbackend.hqlconsole;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.function.Function;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -22,25 +20,21 @@ public class InsertStatement extends AbstractUpdateStatement
 	private EntityManager em;
 
 	@Override
-	@Transactional(rollbackOn={RuntimeException.class,IllegalStateException.class})
-	public long process(String sql,List<Object[]> outputRows,Function<Long,Boolean> commit)
+	@Transactional
+	public Integer process()
 	{
 		try
 		{
-			Object x = _procesarInsert(sql);
+			Object x = _procesarInsert(getHql());
 			em.persist(x);
-			em.flush();		
 			
-			if( !commit.apply(1L) )
-			{
-				throw new IllegalStateException("Rolledback");
-			}
-
+			if( getExecuteCommit().apply(t) )
+			em.flush();		
 			return 1;
 		}
 		catch(Exception e)
 		{
-			throw new RuntimeException("Error en la sentencia: ["+sql+"]",e);
+			throw new RuntimeException("Error en la sentencia: ["+getHql()+"]",e);
 		}
 		
 	}

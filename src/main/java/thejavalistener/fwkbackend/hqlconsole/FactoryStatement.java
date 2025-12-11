@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.ColumnQueryStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.EntityQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.UpdateStatement;
 import thejavalistener.fwkutils.string.MyString;
 
@@ -16,9 +17,9 @@ public class FactoryStatement
 	@Autowired
 	private ApplicationContext ctx;
 	
-	public AbstractUpdateStatement getStatement(String hql)
+	public AbstractStatement<?> getStatement(String hql)
 	{
-		AbstractUpdateStatement stm = null;
+		AbstractStatement<?> stm = null;
 		
 		// tomo la primera palabra
 		String w = MyString.getWordAt(hql,0).toLowerCase().trim();
@@ -31,8 +32,10 @@ public class FactoryStatement
 				stm = ctx.getBean(DescStatement.class);
 				break;
 			case "select":
-			case "from":
 				stm = ctx.getBean(ColumnQueryStatement.class);					
+				break;
+			case "from":
+				stm = ctx.getBean(EntityQueryStatement.class);					
 				break;
 			case "delete":
 			case "update":
