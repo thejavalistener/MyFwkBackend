@@ -12,10 +12,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.transaction.Transactional;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
 
 @Component
 @Primary
-public class InsertStatement extends AbstractStatement
+public class InsertStatement extends AbstractUpdateStatement
 {
 	@PersistenceContext
 	private EntityManager em;

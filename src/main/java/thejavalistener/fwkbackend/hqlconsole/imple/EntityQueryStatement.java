@@ -1,4 +1,5 @@
-package thejavalistener.fwkbackend.hqlconsole;
+package thejavalistener.fwkbackend.hqlconsole.imple;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -8,54 +9,40 @@ import org.springframework.stereotype.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractEntityQueryStatement;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
 
 @Component
 @Primary
-public class QueryStatement extends AbstractStatement
+public class EntityQueryStatement extends AbstractEntityQueryStatement
 {
 	@PersistenceContext
 	private EntityManager em; 
 		
+	@SuppressWarnings("unchecked")
 	@Override
-	public long process(String sql, List<Object[]> outputRows, Function<Long,Boolean> commit)
+	public List<Object> process()
 	{
 		try
 		{
+			String hql = getHql();
+
 			// Proceso la lapalbra LIMIT 
-			int limit = _procesarLIMIT(sql);
+			int limit = _procesarLIMIT(hql);
 			if( limit>=0 )
 			{
-				sql = _removerLIMIT(sql);
+				hql = _removerLIMIT(hql);
 			}
 		
 			// Creo el Query
-			Query q = em.createQuery(sql);
+			Query q = em.createQuery(hql);
 			if( limit>0 )
 			{
 				q.setMaxResults(limit);
 			}
 			
-			List<?> result = q.getResultList();
-
-			Object[] rows;
-			for(Object o:result)
-			{
-				if( o instanceof Object[] )
-				{
-					rows = (Object[])o;
-				}
-				else
-				{
-					rows = MyReflection.object.getValues(o).toArray();
-				}
-
-				outputRows.add(rows);
-			}
-			
-			return result.size();
-			
+			return q.getResultList();
 		}
 		catch(Exception e)
 		{
@@ -80,6 +67,5 @@ public class QueryStatement extends AbstractStatement
 	{
 		int p = sql.toLowerCase().lastIndexOf("limit");
 		return sql.substring(0,p);
-	}
-	
+	}	
 }

@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyCollection;
 
 @Component
-public class DescStatement extends AbstractStatement
+public class DescStatement extends AbstractUpdateStatement
 {
 	@PersistenceContext
 	private EntityManager em = null;
