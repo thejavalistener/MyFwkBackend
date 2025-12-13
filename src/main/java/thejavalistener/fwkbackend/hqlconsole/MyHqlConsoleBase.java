@@ -9,8 +9,10 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import jakarta.annotation.PostConstruct;
@@ -30,6 +32,9 @@ import thejavalistener.fwkutils.string.MyString;
 
 public abstract class MyHqlConsoleBase
 {
+	@Autowired
+	private ApplicationContext ctx;
+	
 	private MyFileProperties properties;
 
 	protected abstract void executeHql(String sql);
@@ -46,6 +51,7 @@ public abstract class MyHqlConsoleBase
 	private MyTabbedPane resultsTabbedPane;
 		
 	private EscuchaConsola escuchaConsola;
+	
 	
 	@PostConstruct
 	public void init()
@@ -107,7 +113,7 @@ public abstract class MyHqlConsoleBase
 	{
 		save();
 	}
-
+	
 	private void _addLink(String desc,String hotKey,int comb,int vk,char c,JPanel p)
 	{
 		MyLink lnk = new MyLink(desc);
@@ -208,7 +214,7 @@ public abstract class MyHqlConsoleBase
 	    	// ALT+N - New Object
 	        if(e.isAltDown() && Character.toLowerCase(e.getKeyCode()) == 'n') 
 	        {
-				//getMyApp().showScreen(HQLCreateNewEntity.class).pack().centerH(150).apply();
+	        	ctx.getBean(CreateNewEntityDialog.class,contentPane);
 				return;
 	        }
 	    }
