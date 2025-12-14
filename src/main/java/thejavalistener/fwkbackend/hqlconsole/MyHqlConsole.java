@@ -3,6 +3,8 @@ package thejavalistener.fwkbackend.hqlconsole;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.swing.JFrame;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +12,7 @@ import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractColumnQue
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractEntityQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.FactoryStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.NewStatement;
 import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.various.MyCollection;
 import thejavalistener.fwkutils.various.MyReflection;
@@ -51,6 +53,11 @@ public class MyHqlConsole extends MyHqlConsoleBase
 			Function<Integer,Boolean> f = (uc)->MyAwt.showConfirmYES_NO("updateCount="+uc+". Confirma la operacion?","COMMIT",contentPane)==0;
 		    u.setExecuteCommit(f);
 			u.process();   
+		}
+		else if (astm instanceof NewStatement ns)
+		{
+			ns.setParent(contentPane);
+			ns.process();
 		}
 	}
 	

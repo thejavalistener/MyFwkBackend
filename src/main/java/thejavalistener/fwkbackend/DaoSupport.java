@@ -1,6 +1,7 @@
 package thejavalistener.fwkbackend;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.metamodel.EntityType;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
 
@@ -17,6 +19,35 @@ public class DaoSupport
 {
 	@PersistenceContext
 	protected EntityManager em;
+	
+	public Set<EntityType<?>> getEntities()
+	{
+		return em.getMetamodel().getEntities();
+	}
+	
+	// retorna 0 => no existe, 1 => existe y el fullClassname, 2=> existe y es simpleClassname
+	public String isEntity(String className)
+	{
+		// 1) prioridad: fully qualified name
+		for (EntityType<?> et : getEntities())
+		{
+			if (et.getJavaType().getName().equals(className))
+			{
+				return className;
+			}
+		}
+
+		// 2) fallback: simple name
+		for (EntityType<?> et : getEntities())
+		{
+			if (et.getJavaType().getSimpleName().equals(className))
+			{
+				return et.getJavaType().getName();
+			}
+		}
+
+		return null;
+	}
 
 	public long count(Class<?> entityClass)
 	{

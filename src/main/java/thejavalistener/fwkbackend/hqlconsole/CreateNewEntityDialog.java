@@ -23,7 +23,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.metamodel.EntityType;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.FactoryStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.list.MyComboBox;
@@ -40,9 +39,6 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 {
 	@Autowired
 	private FactoryStatement factory;
-	
-//	@Autowired
-//	private MyHqlConsoleFacade facade;
 	
 	// combo con entities
 	protected Class<?> entityClass;
@@ -81,7 +77,6 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 				cbEntities.addItem(entityType.getJavaType());
 			}
 			cbEntities.setSelectedItem(0);
-
 		}
 		else
 		{
@@ -228,9 +223,6 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 		}
 	}
 		
-	
-	
-
 	class EscuchaNew implements ActionListener
 	{
 		private String label;
