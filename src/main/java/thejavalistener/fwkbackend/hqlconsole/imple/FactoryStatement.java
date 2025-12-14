@@ -1,13 +1,10 @@
-package thejavalistener.fwkbackend.hqlconsole;
+package thejavalistener.fwkbackend.hqlconsole.imple;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.ColumnQueryStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.EntityQueryStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.UpdateStatement;
 import thejavalistener.fwkutils.string.MyString;
 
 

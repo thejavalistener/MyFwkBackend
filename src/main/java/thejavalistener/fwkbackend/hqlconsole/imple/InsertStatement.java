@@ -1,4 +1,4 @@
-package thejavalistener.fwkbackend.hqlconsole; 
+package thejavalistener.fwkbackend.hqlconsole.imple; 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -176,34 +176,75 @@ public class InsertStatement extends AbstractUpdateStatement
 	
 	private static Object parseValue(Class<?> tipo, String valor) throws Exception
 	{
-		valor=valor.trim();
-		if(valor.equalsIgnoreCase("null")) return null;
+		valor = valor.trim();
 
-		// if (tipo == String.class) return valor.replaceAll("^\"|\"$", "");
+		if(valor.equalsIgnoreCase("null"))
+			return null;
 
-		if(tipo==String.class)
+		// STRING
+		if(tipo == String.class)
 		{
-			if(!valor.startsWith("'")||!valor.endsWith("'"))
+			if(!valor.startsWith("'") || !valor.endsWith("'"))
+				throw new IllegalArgumentException("Las cadenas deben ir entre comillas simples: " + valor);
+
+			return valor.substring(1, valor.length() - 1);
+		}
+
+		// NUMÉRICOS
+		if(tipo == int.class || tipo == Integer.class) return Integer.parseInt(valor);
+		if(tipo == long.class || tipo == Long.class) return Long.parseLong(valor);
+		if(tipo == boolean.class || tipo == Boolean.class) return Boolean.parseBoolean(valor);
+		if(tipo == double.class || tipo == Double.class) return Double.parseDouble(valor);
+		if(tipo == float.class || tipo == Float.class) return Float.parseFloat(valor);
+		if(tipo == BigDecimal.class) return new BigDecimal(valor);
+
+		// DATE
+		if(tipo == java.sql.Date.class)
+		{
+			if(!valor.startsWith("'") || !valor.endsWith("'"))
+				throw new IllegalArgumentException("Date debe ir entre comillas simples: " + valor);
+
+			String v = valor.substring(1, valor.length() - 1);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date d = sdf.parse(v);
+			return new java.sql.Date(d.getTime());
+		}
+
+		// TIMESTAMP
+		if(tipo == java.sql.Timestamp.class)
+		{
+			if(valor.equalsIgnoreCase("now"))
+				return new java.sql.Timestamp(System.currentTimeMillis());
+
+			if(!valor.startsWith("'") || !valor.endsWith("'"))
+				throw new IllegalArgumentException("Timestamp debe ir entre comillas simples: " + valor);
+
+			String v = valor.substring(1, valor.length() - 1);
+
+			String pattern;
+			if(v.matches("\\d{4}-\\d{2}-\\d{2}_\\d{2}:\\d{2}:\\d{2}"))
+				pattern = "yyyy-MM-dd_HH:mm:ss";
+			else if(v.matches("\\d{4}-\\d{2}-\\d{2}_\\d{2}:\\d{2}"))
 			{
-				throw new IllegalArgumentException("Las cadenas deben ir entre comillas simples: '"+valor+"'");
+				v += ":00";
+				pattern = "yyyy-MM-dd_HH:mm:ss";
 			}
-			return valor.substring(1,valor.length()-1); // quita las comillas
-														// simples
+			else if(v.matches("\\d{4}-\\d{2}-\\d{2}"))
+			{
+				v += "_00:00:00";
+				pattern = "yyyy-MM-dd_HH:mm:ss";
+			}
+			else
+			{
+				throw new IllegalArgumentException("Formato de Timestamp inválido: " + valor);
+			}
+
+			SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+			java.util.Date d = sdf.parse(v);
+			return new java.sql.Timestamp(d.getTime());
 		}
 
-		if(tipo==int.class||tipo==Integer.class) return Integer.parseInt(valor);
-		if(tipo==long.class||tipo==Long.class) return Long.parseLong(valor);
-		if(tipo==boolean.class||tipo==Boolean.class) return Boolean.parseBoolean(valor);
-		if(tipo==double.class||tipo==Double.class) return Double.parseDouble(valor);
-		if(tipo==float.class||tipo==Float.class) return Float.parseFloat(valor);
-		if(tipo==BigDecimal.class) return new BigDecimal(valor);
-		if(tipo==java.sql.Date.class)
-		{
-			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-			java.util.Date utilDate=sdf.parse(valor.replaceAll("^\"|\"$",""));
-			return new java.sql.Date(utilDate.getTime());
-		}
-
-		throw new IllegalArgumentException("Tipo no soportado: "+tipo);
+		throw new IllegalArgumentException("Tipo no soportado: " + tipo);
 	}
+
 }

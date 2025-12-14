@@ -6,12 +6,11 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractColumnQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractEntityQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.FactoryStatement;
 import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.various.MyCollection;
 import thejavalistener.fwkutils.various.MyReflection;
@@ -21,12 +20,7 @@ public class MyHqlConsole extends MyHqlConsoleBase
 {
 	@Autowired
 	private FactoryStatement factory;
-	
-	@PersistenceContext
-	private EntityManager em;
-	
-	
-	
+		
 	private boolean hayUpdate = false;
 
 	@Override
