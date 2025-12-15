@@ -13,7 +13,12 @@ import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateSta
 public class UpdateStatement extends AbstractUpdateStatement
 {
 	@PersistenceContext
-	private EntityManager em; 
+	private EntityManager em;
+	
+	public UpdateStatement()
+	{
+		setUpdateType(UPDATE);
+	}
 		
 	@Override
 	@Transactional

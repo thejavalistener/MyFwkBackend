@@ -22,7 +22,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.metamodel.EntityType;
-import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.list.MyComboBox;
@@ -31,7 +30,6 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.awt.variuos.MyComponent;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
-import thejavalistener.fwkutils.various.UDate;
 
 @Component
 @Scope("prototype")
@@ -510,17 +508,4 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 
 		return hql.toString();
 	}
-	
-	
-	public static void main(String[] args)
-	{
-		Alumno a = new Alumno();
-		a.setIdAlumno(3);
-		a.setNombre("Pablito");
-		a.setFechaNacimiento(new UDate().toSqlDate());
-		
-		String hql = _objectToHQLInsert(a);
-		System.out.println(hql);
-	}
-	
 }

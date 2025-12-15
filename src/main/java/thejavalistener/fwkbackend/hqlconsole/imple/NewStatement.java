@@ -8,24 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.Entity;
 import thejavalistener.fwkbackend.DaoSupport;
 import thejavalistener.fwkbackend.hqlconsole.CreateNewEntityDialog;
-import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
 import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.string.MyString;
 
 @Component
-public class NewStatement extends AbstractStatement<Integer>
+public class NewStatement extends AbstractUpdateStatement
 {
 	@Autowired
 	private ApplicationContext ctx;
+	
+	public NewStatement()
+	{
+		setUpdateType(INSERT);
+	}
 	
 	@Autowired
 	private DaoSupport dao;
 	
 	private JPanel parent;
-
+	
 	@Override
 	public Integer process()
 	{

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.ColumnQueryStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.DeleteStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.DescStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.EntityQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
@@ -41,8 +42,10 @@ public class FactoryStatement
 				stm = ctx.getBean(EntityQueryStatement.class);					
 				break;
 			case "delete":
+				stm = ctx.getBean(DeleteStatement.class);										
+				break;
 			case "update":
-				stm = ctx.getBean(UpdateStatement.class);										
+				stm = ctx.getBean(UpdateStatement.class); // <<------- SALTA ACA 							
 				break;
 			case "insert":
 				stm = ctx.getBean(InsertStatement.class);

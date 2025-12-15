@@ -21,6 +21,11 @@ public class InsertStatement extends AbstractUpdateStatement
 	@PersistenceContext
 	private EntityManager em;
 
+	public InsertStatement()
+	{
+		setUpdateType(INSERT);
+	}
+	
 	@Override
 	@Transactional
 	public Integer process()

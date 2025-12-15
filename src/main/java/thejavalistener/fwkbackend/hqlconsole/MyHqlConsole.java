@@ -3,9 +3,8 @@ package thejavalistener.fwkbackend.hqlconsole;
 import java.util.List;
 import java.util.function.Function;
 
-import javax.swing.JFrame;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractColumnQueryStatement;
@@ -18,13 +17,14 @@ import thejavalistener.fwkutils.various.MyCollection;
 import thejavalistener.fwkutils.various.MyReflection;
 
 @Component
+@Scope("prototype")
 public class MyHqlConsole extends MyHqlConsoleBase
 {
 	@Autowired
 	private FactoryStatement factory;
-		
-	private boolean hayUpdate = false;
-
+	
+	private MyHqlConsoleListener listener;
+	
 	@Override
 	protected void executeHql(String hql) 
 	{
@@ -52,25 +52,24 @@ public class MyHqlConsole extends MyHqlConsoleBase
 		{
 			Function<Integer,Boolean> f = (uc)->MyAwt.showConfirmYES_NO("updateCount="+uc+". Confirma la operacion?","COMMIT",contentPane)==0;
 		    u.setExecuteCommit(f);
-			u.process();   
+			int rtdo = u.process(); 
+			_notificarListener(u.getUpdateType(),rtdo);
 		}
 		else if (astm instanceof NewStatement ns)
 		{
 			ns.setParent(contentPane);
-			ns.process();
+			int rtdo = ns.process();
+			_notificarListener(ns.getUpdateType(),rtdo);
 		}
 	}
-	
-//	class EscuchaNewEntityCreated implements MyScreenMessageListener
-//	{
-//		@Override
-//		public void onMessageEvent(MyScreenMessageEvent e)
-//		{
-//		}
-//	}
-	
 
+	public void setListener(MyHqlConsoleListener listener)
+	{
+		this.listener=listener;
+	}
 	
-	
-
+	private void _notificarListener(int updateType,int updateCount)
+	{
+		if( listener!=null &&updateCount>0 ) listener.onDataChanged(updateType,updateCount);
+	}
 }
