@@ -104,6 +104,7 @@ public abstract class MyHqlConsoleBase
 		_addLink("|    Create New Object:","[ALT+N]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_N,'N',pNorth);
 		_addLink("|    Clear All:","[ALT+C]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_C,'C',pNorth);
 		_addLink("|    Save:","[ALT+S]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_S,'S',pNorth);
+		_addLink("|    Switch Orientation:","[ALT+O]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_O,'O',pNorth);
 
 		pCenter.add(new MyInsets(pNorth,10,10,0,5),BorderLayout.NORTH);
 
@@ -274,10 +275,17 @@ public abstract class MyHqlConsoleBase
 			// ALT+N - New Object
 			if(e.isAltDown()&&Character.toLowerCase(e.getKeyCode())=='n')
 			{
-				//ctx.getBean(CreateNewEntityDialog.class,contentPane);
 				executeHql("new");
 				return;
 			}
+			
+			// ALT+O - Switch V/H
+			if(e.isAltDown()&&Character.toLowerCase(e.getKeyCode())=='o')
+			{
+				splitPane.switchOrientation();
+				return;
+			}
+
 		}
 	}
 

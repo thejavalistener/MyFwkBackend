@@ -264,7 +264,7 @@ public class NewEntityDialog extends NewEntityDialogBase
 	{
 		MyComboBox<Object> cb = (MyComboBox)myComponents.get(i);
 		cb.addItem(obj);
-		cb.setSelectedItem(		item -> item == obj);
+		cb.setSelectedItem(item->item==obj);
 	}
 		
 	class EscuchaNew implements ActionListener
