@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import javax.swing.JButton;
@@ -24,7 +23,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.metamodel.EntityType;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.NewStatement;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.list.MyComboBox;
 import thejavalistener.fwkutils.awt.text.MyTextField;
@@ -32,6 +33,7 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.awt.variuos.MyComponent;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
+import thejavalistener.fwkutils.various.MyThread;
 
 @Component
 @Scope("prototype")
@@ -50,6 +52,8 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 	// acetar o cancelar en el form
 	protected JButton bInsert;
 	protected JButton bCancel;
+	
+	private CreateNewEntityDialog outer = this;
 
 	public CreateNewEntityDialog(JPanel parent)
 	{
@@ -239,14 +243,19 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-//			Object newObject = getMyApp().showScreen(HQLCreateNewEntity.class).pack().apply();
+////			Object newObject = getMyApp().showScreen(HQLCreateNewEntity.class).pack().apply();
+//			
+//			List<Object> items = dao.queryMultipleRows("FROM "+typeClass.getName());
+//			int idx = labels.indexOf(label);
+//			MyComboBox<Object> cb = (MyComboBox)myComponents.get(idx);
+//			cb.setItems(items);
+//			
+////			cb.setSelectedItem(t->_equalsById(t,newObject));
 			
-			List<Object> items = dao.queryMultipleRows("FROM "+typeClass.getName());
-			int idx = labels.indexOf(label);
-			MyComboBox<Object> cb = (MyComboBox)myComponents.get(idx);
-			cb.setItems(items);
-			
-//			cb.setSelectedItem(t->_equalsById(t,newObject));
+			AbstractStatement<?> astm = factory.getStatement("new "+typeClass.getName());
+			((NewStatement)astm).setParent(outer.contentPane);
+		//	((NewStatement)astm).setUpdateListener(outer.);
+			MyThread.startDelayed(()->((NewStatement)astm).process(),3000);
 		}
 
 		private boolean _equalsById(Object a, Object b)

@@ -47,6 +47,10 @@ public abstract class AbstractUpdateStatement extends AbstractStatement<Integer>
 	{
 		this.listener = listener;
 	}
+	public UpdateListener getUpdateListener()
+	{
+		return this.listener;
+	}
 	
 	protected void notifyUpdate(int updateType,int updateCount)
 	{

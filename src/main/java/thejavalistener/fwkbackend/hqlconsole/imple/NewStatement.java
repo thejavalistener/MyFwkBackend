@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import thejavalistener.fwkbackend.DaoSupport;
@@ -15,6 +16,7 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.string.MyString;
 
 @Component
+@Scope("prototype")
 public class NewStatement extends AbstractUpdateStatement
 {
 	@Autowired
