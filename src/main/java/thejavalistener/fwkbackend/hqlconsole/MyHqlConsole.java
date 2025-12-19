@@ -23,7 +23,7 @@ public class MyHqlConsole extends MyHqlConsoleBase
 	@Autowired
 	private FactoryStatement factory;
 	
-	private MyHqlConsoleListener listener;
+	private UpdateListener listener;
 	
 	@Override
 	protected void executeHql(String hql) 
@@ -38,6 +38,13 @@ public class MyHqlConsole extends MyHqlConsoleBase
 		if (astm instanceof AbstractEntityQueryStatement e)
 		{
 		    List<Object> lst = e.process();
+		    
+		    if( lst.size()==0)
+	    	{
+		    	MyAwt.showInformationMessage("No se encontraron datos","Sin Datos",contentPane);				
+		    	return;
+	    	}
+		    
 		    List<String> sHeaders = MyReflection.clasz.getAttributes(e.getEntityClass());
 		    List<Object[]> rows = MyCollection.extract(lst,o->MyReflection.object.getValues(o).toArray());
 		    addResult(hql,rows,sHeaders.toArray());
@@ -46,30 +53,41 @@ public class MyHqlConsole extends MyHqlConsoleBase
 		else if (astm instanceof AbstractColumnQueryStatement c)
 		{
 		    List<Object[]> lst = c.process(); 
+		    if( lst.size()==0)
+	    	{
+		    	MyAwt.showInformationMessage("No se encontraron datos","Sin Datos",contentPane);				
+		    	return;
+	    	}
 		    addResult(hql,lst);
-		}
-		else if (astm instanceof AbstractUpdateStatement u)
-		{
-			Function<Integer,Boolean> f = (uc)->MyAwt.showConfirmYES_NO("updateCount="+uc+". Confirma la operacion?","COMMIT",contentPane)==0;
-		    u.setExecuteCommit(f);
-			int rtdo = u.process(); 
-			_notificarListener(u.getUpdateType(),rtdo);
 		}
 		else if (astm instanceof NewStatement ns)
 		{
 			ns.setParent(contentPane);
-			int rtdo = ns.process();
-			_notificarListener(ns.getUpdateType(),rtdo);
+			ns.setUpdateListener(listener);
+			ns.process();
+		}
+		else if (astm instanceof AbstractUpdateStatement u)
+		{
+			Function<Integer,Boolean> f = (uc)->MyAwt.showConfirmYES_NO("updateCount="+uc+". Confirma la operacion?","COMMIT",contentPane)==0;
+			u.setUpdateListener(listener);
+			u.setExecuteCommit(f);
+			int rtdo = u.process();
+			
+			if( rtdo<=0 )
+			{
+				String rolledback = rtdo<0?"ROLLEDBACK! ":"";
+				MyAwt.showInformationMessage(rolledback+"Ninguna fila resultó afectada","Sin Cambios",contentPane);
+			}
+			else
+			{
+				MyAwt.showInformationMessage(rtdo+" filas resultaron afectadas",u.getDescription(),contentPane);				
+			}
 		}
 	}
 
-	public void setListener(MyHqlConsoleListener listener)
+	public void setUpdateListener(UpdateListener listener)
 	{
+		factory.setUpdateListener(listener);
 		this.listener=listener;
-	}
-	
-	private void _notificarListener(int updateType,int updateCount)
-	{
-		if( listener!=null &&updateCount>0 ) listener.onDataChanged(updateType,updateCount);
-	}
+	}	
 }

@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
+import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractUpdateStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.ColumnQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.DeleteStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.DescStatement;
@@ -20,6 +21,8 @@ public class FactoryStatement
 {
 	@Autowired
 	private ApplicationContext ctx;
+	
+	private UpdateListener listener;
 	
 	public AbstractStatement<?> getStatement(String hql)
 	{
@@ -43,12 +46,15 @@ public class FactoryStatement
 				break;
 			case "delete":
 				stm = ctx.getBean(DeleteStatement.class);										
+				((AbstractUpdateStatement)stm).setUpdateListener(listener);
 				break;
 			case "update":
-				stm = ctx.getBean(UpdateStatement.class); // <<------- SALTA ACA 							
+				stm = ctx.getBean(UpdateStatement.class); 						
+				((AbstractUpdateStatement)stm).setUpdateListener(listener);
 				break;
 			case "insert":
 				stm = ctx.getBean(InsertStatement.class);
+				((AbstractUpdateStatement)stm).setUpdateListener(listener);
 				break;
 			default:
 				throw new RuntimeException("La sentencia debe comenzar con SELECT, FROM, UPDATE, DELETE o INSERT");		
@@ -56,5 +62,10 @@ public class FactoryStatement
 				
 		stm.setHql(hql);
 		return stm;
+	}
+
+	public void setUpdateListener(UpdateListener listener)
+	{
+		this.listener = listener;
 	}
 }

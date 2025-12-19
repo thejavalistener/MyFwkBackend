@@ -274,7 +274,8 @@ public abstract class MyHqlConsoleBase
 			// ALT+N - New Object
 			if(e.isAltDown()&&Character.toLowerCase(e.getKeyCode())=='n')
 			{
-				ctx.getBean(CreateNewEntityDialog.class,contentPane);
+				//ctx.getBean(CreateNewEntityDialog.class,contentPane);
+				executeHql("new");
 				return;
 			}
 		}

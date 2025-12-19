@@ -6,7 +6,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.swing.JButton;
@@ -70,7 +72,10 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 		if( entityClassname==null )
 		{
 			// itero las entidades y cargo todas
-			for(EntityType<?> entityType:getMetamodel().getEntities())
+			List<EntityType<?>> lst = new ArrayList<>(getMetamodel().getEntities());
+			Collections.sort(lst,(a,b)->a.getName().compareTo(b.getName()));
+			
+			for(EntityType<?> entityType:lst)
 			{
 				cbEntities.addItem(entityType.getJavaType());
 			}
@@ -176,13 +181,13 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 		
 		form.addSeparator();
 		
-		// botones cancelar/insertar
-		bCancel = new JButton("Cancel");
-		bCancel.addActionListener(new EscuchaCancel());
+		// botones insertar/cancelar
 		bInsert = new JButton("Insert");
 		bInsert.addActionListener(new EscuchaInsert());
+		bCancel = new JButton("Cancel");
+		bCancel.addActionListener(new EscuchaCancel());
 		
-		form.addRow().add(bCancel).add(bInsert);
+		form.addRow().add(bInsert).add(bCancel);
 		
 		form.makeForm();
 	}
@@ -298,8 +303,6 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 				stm.setExecuteCommit(f->true);
 				stm.process();
 						
-				//facade.persist(obj);
-				
 				Field fId = MyReflection.clasz.getDeclaredField(obj.getClass(),Id.class);
 				Object oId = MyReflection.object.invokeGetter(obj,fId.getName());
 				String sClass = obj.getClass().getSimpleName();
@@ -313,142 +316,7 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 				ex.printStackTrace();
 			}
 		}
-	}
-	
-//	public static String _objectToHQLInsert(Object o)
-//	{
-//		String entityName = o.getClass().getSimpleName();
-//		List<Field> fields = MyReflection.clasz.getFields(o.getClass(),f->f.getAnnotation(Column.class)!=null);
-//		
-//		List<Object> values = MyReflection.object.getValues(o);
-//		String hql="INSERT INTO "+entityName+" VALUES ";
-//
-//		for(int i=0; i<fields.size();i++)
-//		{
-//			hql+=fields.get(i).getName()+"="+values.get(i);
-//			hql+=i<fields.size()-1?", ":"";
-//		}
-//		
-//		return hql;
-//	}
-
-//	public static String _objectToHQLInsert(Object o)
-//	{
-//		String entityName = o.getClass().getSimpleName();
-//		List<Field> fields = MyReflection.clasz.getFields(
-//			o.getClass(),
-//			f -> f.getAnnotation(Column.class) != null
-//		);
-//
-//		StringBuilder hql = new StringBuilder();
-//		hql.append("INSERT INTO ").append(entityName).append(" VALUES ");
-//
-//		for(int i = 0; i < fields.size(); i++)
-//		{
-//			Field f = fields.get(i);
-//			f.setAccessible(true);
-//
-//			Object value;
-//			try
-//			{
-//				value = f.get(o);
-//			}
-//			catch(Exception e)
-//			{
-//				throw new RuntimeException(e);
-//			}
-//
-//			hql.append(f.getName()).append("=");
-//
-//			if(value == null)
-//			{
-//				hql.append("null");
-//			}
-//			else if(value instanceof String)
-//			{
-//				hql.append("'").append(value).append("'");
-//			}
-//			else if(value instanceof java.sql.Date)
-//			{
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//				hql.append(sdf.format((java.sql.Date)value));
-//			}
-//			else if(value instanceof java.sql.Timestamp)
-//			{
-//				// degradar a Date para que parseValue lo acepte
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//				hql.append(sdf.format((java.sql.Timestamp)value));
-//			}
-//			else
-//			{
-//				hql.append(value);
-//			}
-//
-//			if(i < fields.size() - 1)
-//				hql.append(", ");
-//		}
-//
-//		return hql.toString();
-//	}
-	
-//	public static String _objectToHQLInsert(Object o)
-//	{
-//		String entityName = o.getClass().getSimpleName();
-//		List<Field> fields = MyReflection.clasz.getFields(
-//			o.getClass(),
-//			f -> f.getAnnotation(Column.class) != null
-//		);
-//
-//		StringBuilder hql = new StringBuilder();
-//		hql.append("INSERT INTO ").append(entityName).append(" VALUES ");
-//
-//		for(int i = 0; i < fields.size(); i++)
-//		{
-//			Field f = fields.get(i);
-//			f.setAccessible(true);
-//
-//			Object value;
-//			try
-//			{
-//				value = f.get(o);
-//			}
-//			catch(Exception e)
-//			{
-//				throw new RuntimeException(e);
-//			}
-//
-//			hql.append(f.getName()).append("=");
-//
-//			if(value == null)
-//			{
-//				continue;
-////				hql.append("null");
-//			}
-//			else if(value instanceof String)
-//			{
-//				hql.append("'").append(value).append("'");
-//			}
-//			else if(value instanceof java.sql.Date)
-//			{
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//				hql.append("'").append(sdf.format((java.sql.Date)value)).append("'");
-//			}
-//			else if(value instanceof java.sql.Timestamp)
-//			{
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-//				hql.append("'").append(sdf.format((java.sql.Timestamp)value)).append("'");
-//			}
-//			else
-//			{
-//				hql.append(value);
-//			}
-//
-//			if(i < fields.size() - 1)
-//				hql.append(", ");
-//		}
-//
-//		return hql.toString();
-//	}
+	}	
 
 	public static String _objectToHQLInsert(Object o)
 	{
@@ -463,7 +331,7 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 
 		boolean first = true;
 
-		for(Field f : fields)
+		for(Field f: fields)
 		{
 			f.setAccessible(true);
 

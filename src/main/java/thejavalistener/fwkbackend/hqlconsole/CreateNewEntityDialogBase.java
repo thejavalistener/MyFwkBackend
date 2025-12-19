@@ -105,17 +105,6 @@ public abstract class CreateNewEntityDialogBase
 			dialog.pack();
 			MyAwt.center(dialog,MyAwt.getMainWindow(parent));
 			dialog.setVisible(true);
-			
-	//		getMyDialog().configurator().pack().centerH(150).apply();
-	//		myDialog.configurator().pack().centerH(150);//.apply();
-			
-	//		getMyDialog().c().pack();
-	//		getMyDialog().centerH(150);
-	//		validate();		
-			
-//			dialog.setSize(350,350);
-//			dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-//			dialog.setVisible(true);
 		}
 	}	
 	

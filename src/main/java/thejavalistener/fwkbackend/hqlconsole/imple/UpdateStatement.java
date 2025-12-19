@@ -27,10 +27,21 @@ public class UpdateStatement extends AbstractUpdateStatement
 		Query q = em.createQuery(getHql());				
 		int updateCount = q.executeUpdate();
 		
+		// si no hubo cambios => no hay commit ni update
+		if( updateCount==0 )
+		{
+			return 0;
+		}
+		
+		// si hubo cambios => commit?
 		if( !getExecuteCommit().apply(updateCount) )
 		{
-			throw new IllegalStateException("ROLLEDBACK");
+			rollback();
+			return -1;
 		}
+		
+		// hubo cambios y commit => notify
+		notifyUpdate(getUpdateType(),updateCount);
 		
 		return updateCount;
 	}

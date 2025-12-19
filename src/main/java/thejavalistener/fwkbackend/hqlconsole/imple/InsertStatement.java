@@ -3,8 +3,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -27,20 +25,24 @@ public class InsertStatement extends AbstractUpdateStatement
 	}
 	
 	@Override
-	@Transactional
+	@Transactional // (rollbackOn=MyRollbackException.class)
 	public Integer process()
 	{
 		try
 		{
 			Object x = _procesarInsert(getHql());
 			em.persist(x);
+			em.flush();	
 			
 			if( !getExecuteCommit().apply(1) )
 			{
-				throw new RuntimeException("Rolledback");
+				rollback();
+				return -1;
 			}
 			
-			em.flush();		
+			
+			notifyUpdate(1,getUpdateType());
+
 			return 1;
 		}
 		catch(Exception e)
