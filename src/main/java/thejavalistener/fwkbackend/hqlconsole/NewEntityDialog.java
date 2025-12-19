@@ -8,12 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +25,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.metamodel.EntityType;
-import thejavalistener.fwkbackend.hqlconsole.abstractstatement.AbstractStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
-import thejavalistener.fwkbackend.hqlconsole.imple.NewStatement;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.list.MyComboBox;
 import thejavalistener.fwkutils.awt.text.MyTextField;
@@ -33,12 +33,27 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.awt.variuos.MyComponent;
 import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
-import thejavalistener.fwkutils.various.MyThread;
 
 @Component
 @Scope("prototype")
-public class CreateNewEntityDialog extends CreateNewEntityDialogBase
+public class NewEntityDialog extends NewEntityDialogBase
 {
+	private java.util.function.BiConsumer<String, Integer> onNewRequested;
+
+	public void setOnNewRequested(BiConsumer<String, Integer> c)
+	{
+	    this.onNewRequested = c;
+	}
+
+	private java.util.function.Consumer<Object> onEntityCreated;
+
+	private Object lastEntityCreated = null;
+	private String labelEntityCreated = null;
+	
+	
+	@Autowired
+	private ApplicationContext ctx;
+	
 	@Autowired
 	private FactoryStatement factory;
 	
@@ -53,14 +68,19 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 	protected JButton bInsert;
 	protected JButton bCancel;
 	
-	private CreateNewEntityDialog outer = this;
+	private NewEntityDialog outer = this;
 
-	public CreateNewEntityDialog(JPanel parent)
+	public NewEntityDialog(JPanel parent)
 	{
 		this(parent,null);
 	}
 	
-	public CreateNewEntityDialog(JPanel parent,String entityClassname)
+	public void setVisible(boolean b)
+	{
+		dialog.setVisible(b);
+	}
+	
+	public NewEntityDialog(JPanel parent,String entityClassname)
 	{	
 		this.entityClassname = entityClassname;
 		this.parent = MyAwt.getMainWindow(parent);
@@ -229,6 +249,23 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public void setOnEntityCreated(java.util.function.Consumer<Object> c)
+	{
+	    this.onEntityCreated = c;
+	}
+
+	public Object getLastEntityCreated()
+	{
+		return lastEntityCreated;
+	}
+	
+	public void setNewManyToOne(Object obj,int i)
+	{
+		MyComboBox<Object> cb = (MyComboBox)myComponents.get(i);
+		cb.addItem(obj);
+		cb.setSelectedItem(		item -> item == obj);
+	}
 		
 	class EscuchaNew implements ActionListener
 	{
@@ -237,42 +274,38 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 		public EscuchaNew(String lbl,Class<?> typeClass)
 		{
 			this.label = lbl;
+			labelEntityCreated = lbl;
 			this.typeClass = typeClass;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-////			Object newObject = getMyApp().showScreen(HQLCreateNewEntity.class).pack().apply();
-//			
-//			List<Object> items = dao.queryMultipleRows("FROM "+typeClass.getName());
-//			int idx = labels.indexOf(label);
-//			MyComboBox<Object> cb = (MyComboBox)myComponents.get(idx);
-//			cb.setItems(items);
-//			
-////			cb.setSelectedItem(t->_equalsById(t,newObject));
-			
-			AbstractStatement<?> astm = factory.getStatement("new "+typeClass.getName());
-			((NewStatement)astm).setParent(outer.contentPane);
-		//	((NewStatement)astm).setUpdateListener(outer.);
-			MyThread.startDelayed(()->((NewStatement)astm).process(),3000);
+		    if (onNewRequested != null) {
+		    	 int idx = labels.indexOf(label);   // ← ESTE ES EL DATO CLAVE
+		         onNewRequested.accept(typeClass.getName(), idx);
+		    }
 		}
-
-		private boolean _equalsById(Object a, Object b)
-		{
-			if(a==null&&b==null) return true;
-			if(a==null&&b!=null||a!=null&&b==null) return false;
-	
-			Field aId=MyReflection.clasz.getDeclaredField(a.getClass(),Id.class);
-			Field bId=MyReflection.clasz.getDeclaredField(b.getClass(),Id.class);
-	
-			Object aV=MyReflection.object.invokeGetter(a,aId.getName());
-			Object bV=MyReflection.object.invokeGetter(b,bId.getName());
-	
-			return aV.equals(bV);
-		}
+		
+		
+		
 
 	}
+	
+	private boolean _equalsById(Object a, Object b)
+	{
+		if(a==null&&b==null) return true;
+		if(a==null&&b!=null||a!=null&&b==null) return false;
+
+		Field aId=MyReflection.clasz.getDeclaredField(a.getClass(),Id.class);
+		Field bId=MyReflection.clasz.getDeclaredField(b.getClass(),Id.class);
+
+		Object aV=MyReflection.object.invokeGetter(a,aId.getName());
+		Object bV=MyReflection.object.invokeGetter(b,bId.getName());
+
+		return aV.equals(bV);
+	}
+
 
 	class EscuchaCancel implements ActionListener
 	{
@@ -318,7 +351,13 @@ public class CreateNewEntityDialog extends CreateNewEntityDialogBase
 				String msg = "Se creó una instancia de "+sClass+" con "+fId.getName()+"="+oId.toString();
 				MyAwt.showInformationMessage(msg,"Se creó un nuevo objeto",contentPane);
 				
-				_resetTextFields();				
+				if (onEntityCreated != null)
+				    onEntityCreated.accept(obj);
+
+				lastEntityCreated = obj;
+				
+				_resetTextFields();			
+				
 			}
 			catch(Exception ex)
 			{

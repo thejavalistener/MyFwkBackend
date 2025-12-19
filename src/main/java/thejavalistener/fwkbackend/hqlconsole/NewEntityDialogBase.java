@@ -24,7 +24,7 @@ import thejavalistener.fwkutils.awt.list.MyComboBoxAdapter;
 import thejavalistener.fwkutils.awt.text.MyTextField;
 import thejavalistener.fwkutils.awt.variuos.MyAwt;
 
-public abstract class CreateNewEntityDialogBase 
+public abstract class NewEntityDialogBase 
 {
 	@PersistenceContext
 	private EntityManager em;
@@ -104,7 +104,6 @@ public abstract class CreateNewEntityDialogBase
 
 			dialog.pack();
 			MyAwt.center(dialog,MyAwt.getMainWindow(parent));
-			dialog.setVisible(true);
 		}
 	}	
 	
