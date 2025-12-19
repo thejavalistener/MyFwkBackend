@@ -104,7 +104,7 @@ public abstract class MyHqlConsoleBase
 		_addLink("|    Create New Object:","[ALT+N]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_N,'N',pNorth);
 		_addLink("|    Clear All:","[ALT+C]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_C,'C',pNorth);
 		_addLink("|    Save:","[ALT+S]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_S,'S',pNorth);
-		_addLink("|    Switch Orientation:","[ALT+O]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_O,'O',pNorth);
+		_addLink("|    Toggle Orientation:","[ALT+O]",KeyEvent.ALT_DOWN_MASK,KeyEvent.VK_O,'O',pNorth);
 
 		pCenter.add(new MyInsets(pNorth,10,10,0,5),BorderLayout.NORTH);
 
@@ -295,17 +295,78 @@ public abstract class MyHqlConsoleBase
 		properties.putObject("myhqlconsole.status.commandline",txt);
 	}
 
+//	private String _selectTextLine(String txt, int curr)
+//	{
+//		int bounds[]=MyString.findParagraphBounds(txt,curr);
+//		if(bounds!=null)
+//		{
+//			commandLine.c().select(bounds[0],bounds[1]);
+//			return txt.substring(bounds[0],bounds[1]);
+//		}
+//
+//		return "";
+//	}
+
 	private String _selectTextLine(String txt, int curr)
 	{
-		int bounds[]=MyString.findParagraphBounds(txt,curr);
-		if(bounds!=null)
-		{
-			commandLine.c().select(bounds[0],bounds[1]);
-			return txt.substring(bounds[0],bounds[1]);
-		}
-
-		return "";
+	    int[] bounds = MyString.findParagraphBounds(txt, curr);
+	    if (bounds != null)
+	    {
+	        bounds = _trimCommentLines(txt, bounds[0], bounds[1]);
+	        if (bounds != null)
+	        {
+	            commandLine.c().select(bounds[0], bounds[1]);
+	            return txt.substring(bounds[0], bounds[1]);
+	        }
+	    }
+	    return "";
 	}
+
+	
+	private int[] _trimCommentLines(String text, int start, int end)
+	{
+	    int s = start;
+	    int e = end;
+
+	    // Trim comentarios arriba
+	    while (s < e)
+	    {
+	        int lineEnd = text.indexOf('\n', s);
+	        if (lineEnd == -1 || lineEnd > e)
+	            lineEnd = e;
+
+	        String line = text.substring(s, lineEnd).trim();
+	        if(line.startsWith("//")||line.startsWith("--")||line.startsWith("#"))
+	        {
+	            s = lineEnd + 1;
+	        }
+	        else
+	        {
+	            break;
+	        }
+	    }
+
+	    // Trim comentarios abajo
+	    while (e > s)
+	    {
+	        int lineStart = text.lastIndexOf('\n', e - 1);
+	        if (lineStart < s)
+	            lineStart = s;
+
+	        String line = text.substring(lineStart, e).trim();
+	        if (line.startsWith("//"))
+	        {
+	            e = lineStart;
+	        }
+	        else
+	        {
+	            break;
+	        }
+	    }
+
+	    return (s < e) ? new int[] { s, e } : null;
+	}
+
 
 
 }
