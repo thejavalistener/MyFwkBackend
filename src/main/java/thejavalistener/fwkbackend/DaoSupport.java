@@ -15,7 +15,7 @@ import thejavalistener.fwkutils.string.MyString;
 import thejavalistener.fwkutils.various.MyReflection;
 
 @Component
-public class DaoSupport
+public final class DaoSupport
 {
 	@PersistenceContext
 	protected EntityManager em;

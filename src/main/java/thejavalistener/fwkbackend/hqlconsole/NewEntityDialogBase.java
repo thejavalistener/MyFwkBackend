@@ -27,7 +27,7 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 public abstract class NewEntityDialogBase 
 {
 	@PersistenceContext
-	private EntityManager em;
+	protected EntityManager em;
 	
 	@Autowired
 	protected DaoSupport dao;

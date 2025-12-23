@@ -174,6 +174,9 @@ public class NewEntityDialog extends NewEntityDialogBase
 			else // foraneo: comboBox
 			{
 				List<Object> items = dao.queryMultipleRows("FROM "+typeClass.getName());
+				
+//				List<Object> items = em.createQuery("FROM "+typeClass.getName()).getResultList();
+				
 				MyComboBox<Object> comboBox = new MyComboBox<>();
 				comboBox.setSpecialItem(" ");
 				comboBox.setItems(items);
