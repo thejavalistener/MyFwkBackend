@@ -32,12 +32,14 @@ dependencies {
     //runtimeOnly 'org.hsqldb:hsqldb:2.7.3'
     //implementation 'p6spy:p6spy:3.9.1'
 
+    implementation 'com.zaxxer:HikariCP:6.3.0'
+
     // === MAIL (Jakarta Mail en lugar de javax.mail) ===
     implementation 'org.eclipse.angus:angus-mail:2.0.3'
     implementation 'org.eclipse.angus:angus-activation:2.0.1'
 
     // === FRAMEWORK UTILS ===
-    implementation 'com.github.thejavalistener:MyFwkUtils:1.0.0'
+    implementation 'com.github.thejavalistener:MyFwkUtils' //:1.0.0
 
     // === UTILIDADES OPCIONALES ===
     // implementation 'com.google.code.gson:gson:2.11.0'

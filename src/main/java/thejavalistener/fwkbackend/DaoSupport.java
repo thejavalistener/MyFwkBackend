@@ -135,6 +135,7 @@ public final class DaoSupport
 	public void insert(Object t)
 	{
 		em.persist(t);
+		em.flush();
 	}	
 	
 	public void delete(Object t)

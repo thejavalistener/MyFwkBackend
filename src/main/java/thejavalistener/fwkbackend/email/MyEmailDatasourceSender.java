@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
+import thejavalistener.fwkutils.various.MyException;
 
 public class MyEmailDatasourceSender
 {
@@ -46,7 +47,9 @@ public class MyEmailDatasourceSender
 					MimeMessageHelper helper = new MimeMessageHelper(mime,true);
 
 					// from
-				    helper.setFrom(ds.getFrom());
+					String ffrom = ds.getFrom();
+					MyException.throwIf(()->ffrom==null,"getFrom() no puede retornal null ni \"\"");
+				    helper.setFrom(ffrom);
 					
 					// to
 					String to = ds.getTo(i);

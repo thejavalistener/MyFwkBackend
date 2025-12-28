@@ -4,7 +4,6 @@ import org.springframework.mail.SimpleMailMessage;
 
 public class MyEmailControllerBasicImple implements MyEmailController
 {
-
 	@Override
 	public void onInit(MyEmailDatasource dataSource)
 	{

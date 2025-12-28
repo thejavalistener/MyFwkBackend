@@ -28,6 +28,7 @@ public class MyHqlConsole extends MyHqlConsoleBase
 	@Override
 	protected void executeHql(String hql) 
 	{
+		
 		// si es null no va...
 		if(hql==null){return;}
 
