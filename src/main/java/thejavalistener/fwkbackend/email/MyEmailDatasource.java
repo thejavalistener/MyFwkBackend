@@ -9,6 +9,6 @@ public interface MyEmailDataSource
 	public String[] getTo(int idx);
 	public String[] getCC(int idx);
 	public String[] getBCC(int idx);
-	public String[] getAttachedFullFilename(int idx);
+	public MyEmailAttachment[] getAttachments(int idx);
 	public int size();
 }
