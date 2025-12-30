@@ -1,11 +1,9 @@
 package thejavalistener.fwkbackend.email;
 
-import org.springframework.mail.SimpleMailMessage;
-
 public interface MyEmailController
 {
-	public void onInit(MyEmailDatasource dataSource);
+	public void onInit(MyEmailDataSource dataSource);
 	public boolean onJobStarting(int currentJob);
-	public boolean onJobFinishied(int currentJob,SimpleMailMessage message);
+	public boolean onJobFinishied(int currentJob);
 	public void onDestroy(int emailsSended);
 }

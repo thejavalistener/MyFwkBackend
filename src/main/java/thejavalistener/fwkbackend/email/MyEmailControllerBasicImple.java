@@ -1,11 +1,9 @@
 package thejavalistener.fwkbackend.email;
 
-import org.springframework.mail.SimpleMailMessage;
-
 public class MyEmailControllerBasicImple implements MyEmailController
 {
 	@Override
-	public void onInit(MyEmailDatasource dataSource)
+	public void onInit(MyEmailDataSource dataSource)
 	{
 	}
 
@@ -16,7 +14,7 @@ public class MyEmailControllerBasicImple implements MyEmailController
 	}
 
 	@Override
-	public boolean onJobFinishied(int currentJob, SimpleMailMessage message)
+	public boolean onJobFinishied(int currentJob)
 	{
 		return true;
 	}
