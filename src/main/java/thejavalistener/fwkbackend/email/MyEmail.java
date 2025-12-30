@@ -16,7 +16,7 @@ public class MyEmail
 
 	public void send(String from, String to, String subject, String text)
 	{
-		send(from,to,subject,text,null,null,null);
+		send(from,to,subject,text,null,null,(String)null);
 	}
 
 	public void send(String from, String to, String subject, String text, String attachFullFilename)
@@ -26,16 +26,21 @@ public class MyEmail
 
 	public void send(String from, String to, String subject, String text, String cc, String bcc)
 	{
-		send(from,to,subject,text,cc,bcc,null);
+		send(from,to,subject,text,cc,bcc,(String)null);
 	}
 
 	public void send(String from, String to, String subject, String text, String cc, String bcc, String attachFullFilename)
 	{
-		String[] acc=(cc!=null)?new String[] {cc}:null;
-		String[] abcc=(bcc!=null)?new String[] {bcc}:null;
-		String[] aAtt=(attachFullFilename!=null)?new String[] {attachFullFilename}:null;
+		MyEmailAttachment att=(attachFullFilename!=null)?new FileEmailAttachment(Paths.get(attachFullFilename)):null;
 
-		send(from,new String[] {to},subject,text,acc,abcc,aAtt);
+		send(from,to,subject,text,cc,bcc,att);
+	}
+
+	public void send(String from, String to, String subject, String text, String cc, String bcc, MyEmailAttachment attachment)
+	{
+		MyEmailAttachment[] atts=(attachment!=null)?new MyEmailAttachment[] {attachment}:null;
+
+		send(from,new String[] {to},subject,text,(cc!=null)?new String[] {cc}:null,(bcc!=null)?new String[] {bcc}:null,atts);
 	}
 
 	// public void send(String from, String[] to, String subject, String text,
