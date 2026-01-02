@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -62,7 +63,14 @@ public abstract class MyHqlConsoleBase
 	@PostConstruct
 	public void init()
 	{
-		properties=new MyFileProperties();
+		try
+		{
+			properties=ctx.getBean(MyFileProperties.class);			
+		}
+		catch(NoSuchBeanDefinitionException e)
+		{
+			throw new IllegalStateException("La consola requiere que tengas declarada una instancia de MyFileProperties en el contexto de Spring");
+		}
 
 		// panel principal es un border layout
 		contentPane=new JPanel(new BorderLayout());
