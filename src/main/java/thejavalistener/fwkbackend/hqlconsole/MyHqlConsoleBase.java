@@ -124,7 +124,13 @@ public abstract class MyHqlConsoleBase
 		commandLine.requestFocus();
 	}
 	
+	
 	public void showOnOwnFrame(boolean block)
+	{
+		showOnOwnFrame(block,false);
+	}
+	
+	public void showOnOwnFrame(boolean block,boolean shutdownDatabaseAfterClose)
 	{
 	    CountDownLatch latch = block ? new CountDownLatch(1) : null;
 
@@ -138,6 +144,7 @@ public abstract class MyHqlConsoleBase
 	        {
 	            if (latch != null)
 	            {
+					executeHql("shutdown");           	
 	                frame.dispose();
 	            }
 	            else

@@ -12,6 +12,7 @@ import thejavalistener.fwkbackend.hqlconsole.imple.DescStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.EntityQueryStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.NewStatement;
+import thejavalistener.fwkbackend.hqlconsole.imple.ShutdownStatement;
 import thejavalistener.fwkbackend.hqlconsole.imple.UpdateStatement;
 import thejavalistener.fwkutils.string.MyString;
 
@@ -54,6 +55,10 @@ public class FactoryStatement
 				break;
 			case "insert":
 				stm = ctx.getBean(InsertStatement.class);
+				((AbstractUpdateStatement)stm).setUpdateListener(listener);
+				break;
+			case "shutdown":
+				stm = ctx.getBean(ShutdownStatement.class);
 				((AbstractUpdateStatement)stm).setUpdateListener(listener);
 				break;
 			default:
