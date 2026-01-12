@@ -144,7 +144,7 @@ public abstract class MyHqlConsoleBase
 	        {
 	            if (latch != null)
 	            {
-					executeHql("shutdown");           	
+					if(shutdownDatabaseAfterClose) executeHql("shutdown");           	
 	                frame.dispose();
 	            }
 	            else

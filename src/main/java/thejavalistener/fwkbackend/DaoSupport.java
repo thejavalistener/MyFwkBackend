@@ -272,4 +272,9 @@ public final class DaoSupport
 		
 		return true;
 	}
+
+	public void merge(Object o)
+	{
+		em.merge(o);
+	}
 }
