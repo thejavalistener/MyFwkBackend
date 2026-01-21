@@ -18,7 +18,7 @@ repositories {
 dependencies {
     // === SPRING CORE (funciona con Boot 3 y con Spring standalone) ===
     api 'org.springframework:spring-context:6.1.5'
-    api 'org.springframework:spring-web:6.1.5'
+//    api 'org.springframework:spring-web:6.1.5'
     api 'org.springframework:spring-orm:6.1.5'
     api 'org.springframework:spring-context-support:6.1.5'
 

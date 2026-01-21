@@ -16,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,10 +133,15 @@ public abstract class MyHqlConsoleBase
 	
 	public void showOnOwnFrame(boolean block,boolean shutdownDatabaseAfterClose)
 	{
+		showOnOwnFrame(block,false,()->{});
+	}
+	
+	public void showOnOwnFrame(boolean block,boolean shutdownDatabaseAfterClose,Runnable doOnClose)
+	{
 	    CountDownLatch latch = block ? new CountDownLatch(1) : null;
 
 	    frame = new JFrame("HQL Console");
-	    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	    frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 	    frame.addWindowListener(new WindowAdapter()
 	    {
@@ -157,7 +163,11 @@ public abstract class MyHqlConsoleBase
 	        public void windowClosed(WindowEvent e)
 	        {
 	            if (latch != null)
+	            {
 	                latch.countDown();
+	            }
+	            
+	            doOnClose.run();
 	        }
 	    });
 
@@ -184,7 +194,6 @@ public abstract class MyHqlConsoleBase
 	        }
 	    }
 	}
-
 
 	@PreDestroy
 	public void destroy()
