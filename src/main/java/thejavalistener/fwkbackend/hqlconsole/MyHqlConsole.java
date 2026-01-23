@@ -16,8 +16,6 @@ import thejavalistener.fwkutils.awt.variuos.MyAwt;
 import thejavalistener.fwkutils.various.MyCollection;
 import thejavalistener.fwkutils.various.MyReflection;
 
-@Component
-@Scope("prototype")
 public class MyHqlConsole extends MyHqlConsoleBase
 {
 	@Autowired

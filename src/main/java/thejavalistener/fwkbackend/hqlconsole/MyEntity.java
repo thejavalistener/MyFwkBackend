@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import thejava.listener.fwkutils.log.MyLogs;
 import thejavalistener.fwkutils.string.MyString;
 
 public class MyEntity
@@ -35,6 +37,13 @@ public class MyEntity
 		Table annTable = clazz.getAnnotation(Table.class);
 		tableName = annTable!=null?annTable.name():className;
 		
+		// determino si es un supertipo
+		MyLogs.get().debug("Acá debería mejorar MyEntity para buscar el supertype recursivamente...");
+		if( clazz.getAnnotation(DiscriminatorValue.class)!=null )
+		{
+			tableName = "ST->"+clazz.getSuperclass().getSimpleName();
+		}
+		
 		packageName = clazz.getPackageName();
 		
 		for(Field f:clazz.getDeclaredFields())
@@ -61,8 +70,9 @@ public class MyEntity
 			{
 				if( annJoinColumn!=null )
 				{
-					MyAttribute att = new MyAttribute();
 					String fieldName = MyString.ifEmtyOrNull(annJoinColumn.name(),f.getName());
+
+					MyAttribute att = new MyAttribute();
 					att.setName(f.getName());
 					att.setFieldName(fieldName);
 					att.setId(false);
