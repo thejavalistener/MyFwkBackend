@@ -143,6 +143,12 @@ public final class DaoSupport
 		em.remove(t);
 	}
 	
+	
+	public int delete(Class<?> entityClass)
+	{
+		return update("DELETE "+entityClass.getName());
+	}
+	
 	public int update(String hql,Object ...params)
 	{
 		Query q = em.createQuery(hql);
