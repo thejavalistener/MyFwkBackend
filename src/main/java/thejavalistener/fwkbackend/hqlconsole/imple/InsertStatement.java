@@ -18,6 +18,8 @@ public class InsertStatement extends AbstractUpdateStatement
 {
 	@PersistenceContext
 	private EntityManager em;
+	
+	private Object generatedId;
 
 	public InsertStatement()
 	{
@@ -33,6 +35,19 @@ public class InsertStatement extends AbstractUpdateStatement
 			Object x = _procesarInsert(getHql());
 			em.persist(x);
 			em.flush();	
+			
+			// -----------
+			
+			generatedId = em.getEntityManagerFactory()
+                    .getPersistenceUnitUtil()
+                    .getIdentifier(x);
+			//------------
+			
+			
+			
+			
+			
+			
 			
 			if( !getExecuteCommit().apply(1) )
 			{
@@ -254,4 +269,11 @@ public class InsertStatement extends AbstractUpdateStatement
 		throw new IllegalArgumentException("Tipo no soportado: " + tipo);
 	}
 
+	public Object getGeneratedId()
+	{
+		return generatedId;
+	}
+
 }
+
+

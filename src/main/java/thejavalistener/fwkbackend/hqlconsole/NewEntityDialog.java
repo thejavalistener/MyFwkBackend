@@ -25,6 +25,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.metamodel.EntityType;
+import thejava.listener.fwkutils.log.MyLogs;
 import thejavalistener.fwkbackend.hqlconsole.imple.InsertStatement;
 import thejavalistener.fwkutils.awt.link.MyLink;
 import thejavalistener.fwkutils.awt.list.MyComboBox;
@@ -48,7 +49,6 @@ public class NewEntityDialog extends NewEntityDialogBase
 	private java.util.function.Consumer<Object> onEntityCreated;
 
 	private Object lastEntityCreated = null;
-	private String labelEntityCreated = null;
 	
 	
 	@Autowired
@@ -277,7 +277,6 @@ public class NewEntityDialog extends NewEntityDialogBase
 		public EscuchaNew(String lbl,Class<?> typeClass)
 		{
 			this.label = lbl;
-			labelEntityCreated = lbl;
 			this.typeClass = typeClass;
 		}
 		
@@ -341,15 +340,21 @@ public class NewEntityDialog extends NewEntityDialogBase
 					}
 				}
 				
+				MyLogs.get().debug("ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+				
 				// --------------------- ACAAAAAAAAAAAA -----------------
 				Object obj = _generarObject();
 				String hql = _objectToHQLInsert(obj);
 				InsertStatement stm = (InsertStatement)factory.getStatement(hql); 
 				stm.setExecuteCommit(f->true);
 				stm.process();
-						
+				
+				
+				
 				Field fId = MyReflection.clasz.getDeclaredField(obj.getClass(),Id.class);
-				Object oId = MyReflection.object.invokeGetter(obj,fId.getName());
+
+				Object oId = stm.getGeneratedId();
+				//Object oId = MyReflection.object.invokeGetter(obj,fId.getName());
 				String sClass = obj.getClass().getSimpleName();
 				String msg = "Se creó una instancia de "+sClass+" con "+fId.getName()+"="+oId.toString();
 				MyAwt.showInformationMessage(msg,"Se creó un nuevo objeto",contentPane);

@@ -37,7 +37,7 @@ public class ColumnQueryStatement extends AbstractColumnQueryStatement
 			List<?> result = q.getResultList();
 			for(Object o:result)
 			{
-				if( result.get(0) instanceof Object[] oa )
+				if( o instanceof Object[] oa )
 				{
 					ret.add(oa);
 				}
