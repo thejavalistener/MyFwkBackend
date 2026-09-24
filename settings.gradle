@@ -1,2 +1,4 @@
 rootProject.name = 'MyFwkBackend'
-includeBuild('../MyFwkUtils') // ruta al proyecto FW (MyFramework)
+if (!System.getenv('JITPACK')) {
+    includeBuild('../MyFwkUtils')
+}
