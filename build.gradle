@@ -39,7 +39,7 @@ dependencies {
     implementation 'org.eclipse.angus:angus-activation:2.0.1'
 
     // === FRAMEWORK UTILS ===
-    implementation 'com.github.thejavalistener:MyFwkUtils' //:1.0.0
+    implementation 'com.github.thejavalistener:MyFwkUtils:v2.0.0'
 
     // === UTILIDADES OPCIONALES ===
     // implementation 'com.google.code.gson:gson:2.11.0'
